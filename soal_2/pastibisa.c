@@ -121,8 +121,6 @@ void decrypt_content(char *content, int length) {
     }
 }
 
-static const char *pesan_dir = "/home/syela/tes/sensitif/pesan";
-
 // Fungsi untuk membaca atribut file
 static int xmp_getattr(const char *path, struct stat *stbuf) {
     int res;
@@ -136,8 +134,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf) {
 }
 
 // Fungsi untuk membaca isi direktori
-static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-                       off_t offset, struct fuse_file_info *fi) {
+static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
     DIR *dp;
     struct dirent *de;
     char fpath[1000];
@@ -201,7 +198,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
     }
 
     content[res] = '\0';
-    decrypt_content(content, res); // Dekripsi konten sebelum disalin ke buffer
+    decrypt_content(content, res); 
     memcpy(buf, content, res);
     free(content);
     close(fd);
