@@ -255,6 +255,104 @@ kemudian juga terdapat fungsi untuk menyatukan beberapa pecahan gambar pada dire
 
 sehingga apabila dilakukan listing file, maka akan menampilkan file yang tergabung dalam direktori fuze, dan file yang terpecah pada direktori relics.
 
+```c
+
+static int split_file(const char *path) {
+    char temp_fpath[1000];
+    sprintf(temp_fpath, "%s%s", fuze_path, path); // Path ke file sementara di direktori fuze
+
+    FILE *input_file = fopen(temp_fpath, "rb");
+    if (input_file == NULL) {
+        perror("Failed to open input file");
+        return -errno;
+    }
+
+    fseek(input_file, 0, SEEK_END);
+    long file_size = ftell(input_file);
+    fseek(input_file, 0, SEEK_SET);
+
+    if (file_size <= 0) {
+        fclose(input_file);
+        printf("File is empty or error getting file size: %s\n", temp_fpath);
+        return 0;
+    }
+
+    printf("Splitting file: %s of size %ld bytes\n", temp_fpath, file_size);
+
+    char part_file_path[1000];
+    int part_number = 0;
+    size_t total_bytes_read = 0;
+    while (total_bytes_read < file_size) {
+        sprintf(part_file_path, "%s/%s.%03d", relics_path, path, part_number);
+        FILE *output_file = fopen(part_file_path, "wb");
+        if (output_file == NULL) {
+            perror("Failed to open output file");
+            fclose(input_file);
+            return -errno;
+        }
+
+        char buffer[10240]; // 10 KB buffer
+        size_t bytes_read = fread(buffer, 1, sizeof(buffer), input_file);
+        if (bytes_read > 0) {
+            fwrite(buffer, 1, bytes_read, output_file);
+            total_bytes_read += bytes_read;
+            printf("Written %zu bytes to %s\n", bytes_read, part_file_path);
+        }
+
+        fclose(output_file);
+        part_number++;
+    }
+
+    fclose(input_file);
+
+    printf("Total bytes read: %zu\n", total_bytes_read);
+    printf("Split file completed.\n");
+
+    return 0;
+}
+
+
+static int delete_parts(const char *path) {
+    char fpath[1000];
+    sprintf(fpath, "%s%s", relics_path, path); // Path ke file di direktori relics
+
+    char part_file_path[1000];
+    for (int i = 0; ; i++) {
+        sprintf(part_file_path, "%s.%03d", fpath, i);
+        if (access(part_file_path, F_OK) != 0) break; // Stop jika tidak ada lagi pecahan
+
+        if (remove(part_file_path) != 0) {
+            perror("Failed to remove part file");
+            return -errno;
+        } else {
+            printf("Removed part file %s\n", part_file_path);
+        }
+    }
+
+    printf("All part files removed for %s\n", fpath);
+    return 0;
+}
+```
+
+pada program diatas terdapat fungsi untuk memecah file dan juga menghapus file.
+
+yakni apabila kita mengupload file dengan ukuran diatas 10 kb dan menaruhnya pada direktori fuze, maka akan dilakukan pemecahan pada direktori relics sehingga menampilkan banyak jumah pecahan dengan format `[namafile].000` .
+
+kemudian apabila kita menghapus file tersebut, maka pecahan file tersebut juga kan ikut terhapus.
+
+![alt text](images/imagelutpi.png)
+
+sebagai contoh saat saya mengupload file lutpi dengan ukuran 18 kb , maka akan terpecah menjadi 2 gambar, dimana berukuran 10kb, dan satunya 8 kb.
+
+![alt text](images/imagereport.png)
+
+pada gambar diatas merupakan list pada direktori report yang sebelumnya disalin dari direktori fuze.
+
+![alt text](images/rep.png)
+gambar diatas meupakan list dari direktori report jika dilihat melalui finder pada mac.
+
+sekian terimakasih.
+
 ## Dokumentasi
 
 ![alt text](<images/archeology.c -o archeology.png>)
@@ -266,5 +364,13 @@ tampilan direktori fuze setelah berhasil menggabungkan
 ![alt text](<images/Pasted Graphic 4.png>)
 Berhasil menampilkan pecahan relics
 
+![alt text](images/boom.png)
+berhasil memuat dan menyalin direktori fuze ke direktori report
+
+## beberapa error sebelumnya
+
 ![alt text](<images/• mwlanaz@MawlsBook-Pro soal_3  cp luffy-png .fuze.png>)
-Belum berhasil menampilkan pecahan dari gambar yang diupload
+saat elum berhasil menampilkan pecahan dari gambar yang diupload, kemudian setelah di coba dengan menambahkan fungsi diatas dapat berjalan dengan baik.
+
+![alt text](<images/total 280.png>)
+fuse belum berjalan, dan kemudian setelah di lengkapi dengan fungsi fuse diatas dapat berjalan dengan baik.
