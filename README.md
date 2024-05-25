@@ -25,6 +25,10 @@
 # Soal 2
 
 ## Deskripsi Soal
+CEO Ini Karya Kita ingin melakukan tes keamanan pada folder 'sensitif' Ini Karya Kita. CEO Ini Karya Kita ingin meminta bantuan pada mahasiswa Teknologi Informasi 2023 untuk menguji dan mengatur keamanan pada folder 'sensitif' tersebut. Di dalam folder tersebut, terdapat 2 folder lagi yang bernama 'pesan' dan 'rahasia-berkas': 
+- Pada folder "pesan" Adfi ingin meningkatkan kemampuan sistemnya dalam mengelola berkas-berkas teks dengan menggunakan fuse. 
+- Kemudian, pada folder “rahasia-berkas”, Adfi dan timnya memutuskan untuk menerapkan kebijakan khusus. Mereka ingin memastikan bahwa folder dengan prefix "rahasia" tidak dapat diakses tanpa izin khusus
+- Setiap proses yang dilakukan akan tercatat pada logs-fuse.log 
 
 ## Pengerjaan
 ```c
