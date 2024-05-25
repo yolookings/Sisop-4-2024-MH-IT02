@@ -16,21 +16,76 @@
 
 ## Deskripsi Soal
 
+Adfi merupakan seorang CEO agency creative bernama Ini Karya Kita. Ia sedang melakukan inovasi pada manajemen proyek photography Ini Karya Kita. Salah satu ide yang dia kembangkan adalah tentang pengelolaan foto proyek dalam sistem arsip Ini Karya Kita. Dalam membangun sistem ini, Adfi tidak bisa melakukannya sendirian, dia perlu bantuan mahasiswa Departemen Teknologi Informasi angkatan 2023 untuk membahas konsep baru yang akan mengubah proyek fotografinya lebih menarik untuk dilihat.
+
+Adfi telah menyiapkan portofolio hasil proyek fotonya yang bisa diunduh dan diakses di www.inikaryakita.id. Silakan eksplorasi web Ini Karya Kita dan temukan halaman untuk bisa mengunduh proyeknya. Setelah Anda unduh, terdapat folder `gallery` dan `bahaya`.
+
+1. Pada folder `gallery`:
+
+   - Membuat folder dengan prefix "wm." Dalam folder ini, setiap gambar yang dipindahkan ke dalamnya akan diberikan watermark bertuliskan `inikaryakita.id`.
+   - Contoh: `mv ikk.jpeg wm-foto/`
+   - Output:
+     - Before: (tidak ada watermark bertuliskan `inikaryakita.id`)
+     - After: (terdapat watermark tulisan `inikaryakita.id`)
+
+2. Pada folder `bahaya`, terdapat file bernama `script.sh`. Adfi menyadari pentingnya menjaga keamanan dan integritas data dalam folder ini. Mereka harus mengubah permission pada file `script.sh` agar bisa dijalankan, karena jika dijalankan maka dapat menghapus semua isi dari `gallery`.
+
+3. Adfi dan timnya juga ingin menambahkan fitur baru dengan membuat file dengan prefix `test` yang ketika disimpan akan mengalami pembalikan (reverse) isi dari file tersebut.
+
 ## Pengerjaan
 
-## Penjelasan
+### Watermark pada Foto
 
-## Dokumentasi
+1. **Membuat Folder Watermark**
+
+   - Buat folder dengan prefix `wm.` di dalam folder `gallery`.
+   - Contoh: `mkdir gallery/wm-foto`
+
+2. **Menambahkan Watermark pada Foto**
+
+   - Pindahkan foto yang akan diberi watermark ke dalam folder `wm.`.
+   - Contoh: `mv gallery/ikk.jpeg gallery/wm-foto/`
+
+3. **Kode C untuk Menambahkan Watermark**
+
+   ```c
+   #include <opencv2/opencv.hpp>
+
+   void addWatermark(const char* inputImagePath, const char* outputImagePath) {
+       cv::Mat image = cv::imread(inputImagePath);
+       if (image.empty()) {
+           printf("Gagal membuka gambar\n");
+           return;
+       }
+
+       std::string text = "inikaryakita.id";
+       int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+       double fontScale = 1;
+       int thickness = 2;
+       cv::Point textOrg(10, image.rows - 10);
+
+       cv::putText(image, text, textOrg, fontFace, fontScale, cv::Scalar::all(255), thickness, 8);
+       cv::imwrite(outputImagePath, image);
+   }
+
+   int main() {
+       addWatermark("gallery/ikk.jpeg", "gallery/wm-foto/ikk_watermarked.jpeg");
+       return 0;
+   }
+   ```
 
 # Soal 2
 
 ## Deskripsi Soal
-CEO Ini Karya Kita ingin melakukan tes keamanan pada folder 'sensitif' Ini Karya Kita. CEO Ini Karya Kita ingin meminta bantuan pada mahasiswa Teknologi Informasi 2023 untuk menguji dan mengatur keamanan pada folder 'sensitif' tersebut. Di dalam folder tersebut, terdapat 2 folder lagi yang bernama 'pesan' dan 'rahasia-berkas': 
-- Pada folder "pesan" Adfi ingin meningkatkan kemampuan sistemnya dalam mengelola berkas-berkas teks dengan menggunakan fuse. 
+
+CEO Ini Karya Kita ingin melakukan tes keamanan pada folder 'sensitif' Ini Karya Kita. CEO Ini Karya Kita ingin meminta bantuan pada mahasiswa Teknologi Informasi 2023 untuk menguji dan mengatur keamanan pada folder 'sensitif' tersebut. Di dalam folder tersebut, terdapat 2 folder lagi yang bernama 'pesan' dan 'rahasia-berkas':
+
+- Pada folder "pesan" Adfi ingin meningkatkan kemampuan sistemnya dalam mengelola berkas-berkas teks dengan menggunakan fuse.
 - Kemudian, pada folder “rahasia-berkas”, Adfi dan timnya memutuskan untuk menerapkan kebijakan khusus. Mereka ingin memastikan bahwa folder dengan prefix "rahasia" tidak dapat diakses tanpa izin khusus
-- Setiap proses yang dilakukan akan tercatat pada logs-fuse.log 
+- Setiap proses yang dilakukan akan tercatat pada logs-fuse.log
 
 ## Pengerjaan
+
 ```c
 void log_action(const char *status, const char *action, const char *info) {
     time_t now;
@@ -51,8 +106,8 @@ void log_action(const char *status, const char *action, const char *info) {
     fclose(log_file);
 }
 ```
-Fungsi `log_action` untuk mencatat tindakan dan status ke file log dengan timestamp. Ini digunakan untuk mencatat keberhasilan atau kegagalan operasi dekripsi.
 
+Fungsi `log_action` untuk mencatat tindakan dan status ke file log dengan timestamp. Ini digunakan untuk mencatat keberhasilan atau kegagalan operasi dekripsi.
 
 ```c
 char *base64_decode(const char *input, int length, int *out_len) {
@@ -73,6 +128,7 @@ char *base64_decode(const char *input, int length, int *out_len) {
     return buffer;
 }
 ```
+
 Fungsi `base64_decode` untuk mendekode string yang dikodekan dalam format Base64
 
 ```c
@@ -88,6 +144,7 @@ void rot13_decode(char *str) {
     }
 }
 ```
+
 Fungsi `rot13_decode` untuk mendekode string yang dikodekan dengan metode ROT13, yaitu mengganti setiap huruf dengan huruf yang berada 13 posisi di depannya dalam alfabet
 
 ```c
@@ -103,6 +160,7 @@ char *hex_decode(const char *input, int length) {
     return output;
 }
 ```
+
 Fungsi `hex_decode` untuk mendekode string yang dikodekan dalam format heksadesimal
 
 ```c
@@ -120,6 +178,7 @@ void reverse_string(char *str) {
     }
 }
 ```
+
 Fungsi `reverse_string` untuk membalikkan string
 
 ```c
@@ -148,6 +207,7 @@ void decrypt_content(char *content, int length) {
     }
 }
 ```
+
 Fungsi `decrypt_content` menentukan metode dekripsi yang tepat berdasarkan prefix string dan kemudian mendekode string tersebut. Prefix yang dikenali adalah `base64`, `rot13`, `hex`, dan `rev`
 
 ```c
@@ -162,6 +222,7 @@ static int xmp_getattr(const char *path, struct stat *stbuf) {
     return 0;
 }
 ```
+
 Fungsi `xmp_getattr` untuk membaca atribut file seperti ukuran, waktu modifikasi, dll., menggunakan fungsi `lstat`
 
 ```c
@@ -188,6 +249,7 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     return 0;
 }
 ```
+
 Fungsi `xmp_readdir` untuk membaca isi direktori dan mengisi buffer dengan nama-nama file dan direktori yang ada
 
 ```c
@@ -204,6 +266,7 @@ static int xmp_open(const char *path, struct fuse_file_info *fi) {
     return 0;
 }
 ```
+
 Fungsi `xmp_open` untuk membuka file
 
 ```c
@@ -233,13 +296,14 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
     }
 
     content[res] = '\0';
-    decrypt_content(content, res); 
+    decrypt_content(content, res);
     memcpy(buf, content, res);
     free(content);
     close(fd);
     return res;
 }
 ```
+
 Fungsi `xmp_read` untuk membaca isi file
 
 ```c
@@ -250,6 +314,7 @@ static struct fuse_operations xmp_oper = {
     .read       = xmp_read,
 };
 ```
+
 Struktur `fuse_operations` menghubungkan fungsi-fungsi yang telah didefinisikan dengan operasi FUSE yang sesuai
 
 ```c
@@ -257,6 +322,7 @@ int main(int argc, char *argv[]) {
     return fuse_main(argc, argv, &xmp_oper, NULL);
 }
 ```
+
 Fungsi `main` memanggil `fuse_main` untuk memulai sistem file FUSE dengan operasi yang telah ditentukan
 
 ## Dokumentasi
