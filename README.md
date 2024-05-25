@@ -325,8 +325,6 @@ int main(int argc, char *argv[]) {
 
 Fungsi `main` memanggil `fuse_main` untuk memulai sistem file FUSE dengan operasi yang telah ditentukan
 
-## Dokumentasi
-
 # Soal 3
 
 `> Maulana`
